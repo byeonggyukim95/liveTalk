@@ -1,0 +1,36 @@
+spring:
+  messages:
+    basename: messages
+    encoding: UTF-8
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL:jdbc:mysql://localhost:3306/app_db}
+    username: ${DB_USER:app_user}
+    password: ${DB_PASS:app_pw}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    consumer:
+      group-id: live-talk-group
+      auto-offset-reset: latest
+      enable-auto-commit: false
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
+    listener:
+      ack-mode: manual_immediate
+    properties:
+      spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+      spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+      spring.json.trusted.packages: "*"
+
+app:
+  kafka:
+    topic:
+      live-talk: live-talk
+
+jwt:
+  issuer: my-service
+  secret: ${JWT_SECRET:0123456789abcdef0123456789abcdef}
+  token-expiration: 600000
